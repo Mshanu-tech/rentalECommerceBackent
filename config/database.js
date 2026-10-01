@@ -30,11 +30,14 @@ export async function checkDatabaseConnection() {
 
     return { connected: true };
   } catch (error) {
+    console.error('❌ DATABASE CONNECTION ERROR:', error);
+
     return {
       connected: false,
-      error: error.message,
+      error: error.message || String(error) || 'Unknown database error',
+      code: error.code || null,
+      errno: error.errno || null,
     };
   }
 }
-
 export default pool;
