@@ -5,16 +5,25 @@ let transporter = null;
 
 function getTransporter() {
   if (!env.smtp.host) return null;
+
   if (!transporter) {
     transporter = nodemailer.createTransport({
       host: env.smtp.host,
       port: env.smtp.port,
       secure: env.smtp.port === 465,
-      // Nodemailer's key is `pass`, not `password` — passing the wrong name silently sends
-      // no credentials, so authenticated SMTP providers reject every message.
-      auth: env.smtp.user ? { user: env.smtp.user, pass: env.smtp.password } : undefined,
+
+      // Force IPv4 to avoid Render → Gmail IPv6 ENETUNREACH
+      family: 4,
+
+      auth: env.smtp.user
+        ? {
+            user: env.smtp.user,
+            pass: env.smtp.password,
+          }
+        : undefined,
     });
   }
+
   return transporter;
 }
 
