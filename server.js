@@ -75,6 +75,22 @@ app.use('/api/messages', messageRoutes);
 app.get('/api', (req, res) => {
   res.json({ success: true, message: 'E-commerce API', version: '1.0.0' });
 });
+app.get('/api/db-test', async (req, res) => {
+  const result = await checkDatabaseConnection();
+
+  if (result.connected) {
+    return res.json({
+      success: true,
+      message: 'Backend is connected to Aiven MySQL'
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message: 'Database connection failed',
+    error: result.error
+  });
+});
 
 // --- Error handling (must be last) ---
 app.use(notFoundHandler);
